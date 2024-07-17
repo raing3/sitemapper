@@ -5,7 +5,6 @@ import isUrl = require('is-url');
 
 // @ts-ignore
 import Sitemapper from '../../lib/assets/sitemapper.js';
-import { SitemapperResponse } from '../../sitemapper';
 let sitemapper: Sitemapper;
 
 describe('Sitemapper', function () {
