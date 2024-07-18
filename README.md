@@ -19,12 +19,12 @@ Notable changes:
 
 ### Installation
 ```bash
-npm install sitemapper --save
+npm install @raing3/sitemapper --save
 ```
 
 ### Example
 ```javascript
-import Sitemapper from 'sitemapper';
+import Sitemapper from '@raing3/sitemapper';
 
 (async () => {
   const Google = new Sitemapper({
