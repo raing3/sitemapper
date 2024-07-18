@@ -10,7 +10,6 @@ module.exports = (api) => {
         }
       }
     ],
-    'minify', // minify the Babel code
   ];
   const plugins = [
     [

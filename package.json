@@ -1,5 +1,5 @@
 {
-  "name": "sitemapper",
+  "name": "@raing3/sitemapper",
   "version": "3.2.10",
   "description": "Parser for XML Sitemaps to be used with Robots.txt and web crawlers",
   "keywords": [
@@ -11,10 +11,10 @@
     "crawlers",
     "webcrawler"
   ],
-  "homepage": "http://github.com/seantomburke/sitemapper",
+  "homepage": "https://github.com/raing3/sitemapper",
   "tonicExampleFilename": "example.js",
   "bugs": {
-    "url": "http://github.com/seantomburke/sitemapper/issues"
+    "url": "https://github.com/raing3/sitemapper/issues"
   },
   "license": "MIT",
   "files": [
@@ -25,7 +25,7 @@
   "types": "./sitemapper.d.ts",
   "repository": {
     "type": "git",
-    "url": "git://github.com/seantomburke/sitemapper.git"
+    "url": "git://github.com/raing3/sitemapper.git"
   },
   "author": {
     "name": "Sean Thomas Burke",
@@ -39,16 +39,9 @@
     "test": "npm run build && mocha ./lib/tests/*.js && npm run lint",
     "lint": "eslint src",
     "clean": "rm -rf lib",
-    "docs": "documentation build ./src/assets/sitemapper.js -f md > docs.md",
     "prepack": "npm run build"
   },
-  "maintainers": [
-    {
-      "name": "Sean Thomas Burke",
-      "email": "seantomburke@users.noreply.github.com",
-      "url": "http://www.seantburke.com"
-    }
-  ],
+  "maintainers": [],
   "directories": {
     "lib": "./lib",
     "test": "./test"
@@ -69,7 +62,6 @@
     "async": "^3.2.5",
     "babel-plugin-add-module-exports": "^1.0.4",
     "babel-preset-minify": "^0.5.2",
-    "documentation": "^14.0.3",
     "eslint": "^9.7.0",
     "globals": "^15.8.0",
     "is-url": "^1.2.4",
@@ -82,6 +74,7 @@
     "got": "^11.8.6",
     "is-gzip": "2.0.0",
     "p-limit": "^3.1.0",
-    "xml2js": "^0.6.2"
+    "xml2js": "^0.6.2",
+    "zod": "^3.23.8"
   }
 }

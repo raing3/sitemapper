@@ -15,7 +15,8 @@
     "preserveConstEnums": true,
     "removeComments": false,
     "strict": true,
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "esModuleInterop": true
   },
   "include": [
     "./*.ts"
