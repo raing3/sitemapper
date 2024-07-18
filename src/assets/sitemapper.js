@@ -11,6 +11,28 @@ import got from "got";
 import zlib from "zlib";
 import pLimit from "p-limit";
 import isGzip from "is-gzip";
+import { z } from "zod";
+
+const sitemapEntrySchema = z.object({
+  loc: z.string().optional().catch(undefined),
+  lastmod: z.union([
+    z.string().date(),
+    z.string().datetime()
+  ]).optional().catch(undefined),
+  changefreq: z.enum([
+    'always',
+    'hourly',
+    'daily',
+    'weekly',
+    'monthly',
+    'yearly',
+    'never'
+  ]).optional().catch(undefined),
+  priority: z.string().refine(priority => {
+    const parsed = parseFloat(priority);
+    return !isNaN(parsed) && parsed >= 0 && parsed <= 1;
+  }).optional().catch(undefined)
+});
 
 /**
  * @typedef {Object} Sitemapper
@@ -46,7 +68,7 @@ export default class Sitemapper {
     this.retries = settings.retries || 0;
     this.rejectUnauthorized =
       settings.rejectUnauthorized === false ? false : true;
-    this.fields = settings.fields || false;
+    this.fields = settings.fields || ['loc', 'lastmod', 'changefreq', 'priority'];
   }
 
   /**
@@ -308,7 +330,10 @@ export default class Sitemapper {
           console.debug(`Urlset found during "crawl('${url}')"`);
         }
         // filter out any urls that are older than the lastmod
-        const sites = data.urlset.url
+        const errors = [];
+        const sites = [];
+
+        data.urlset.url
           .filter((site) => {
             if (this.lastmod === 0) return true;
             if (site.lastmod === undefined) return false;
@@ -316,23 +341,31 @@ export default class Sitemapper {
 
             return modified >= this.lastmod;
           })
-            .map((site) => {
-              if( !this.fields) {
-                return site.loc && site.loc[0];
-              } else {
-                  let fields = {};
-                  for (const [field, active] of Object.entries(this.fields)) {
-                    if(active){
-                      fields[field] = site[field][0]
-                    }
-                  }
-                 return fields;
+          .forEach((site) => {
+            let fields = {};
+            this.fields.forEach((field) => {
+              if (site[field] && site[field][0]) {
+                fields[field] = site[field][0];
               }
             });
 
+            const parsed = sitemapEntrySchema.safeParse(fields);
+
+            if (parsed.success) {
+              sites.push(fields);
+            } else {
+              errors.push({
+                url: site.loc && site.loc[0],
+                type: parsed.error.name,
+                message: parsed.error.message,
+                retries: retryIndex,
+              });
+            }
+          });
+
         return {
           sites,
-          errors: [],
+          errors,
         };
       } else if (data && data.sitemapindex) {
         // Handle child sitemaps found inside the active sitemap
@@ -409,7 +442,6 @@ export default class Sitemapper {
    */
   async getSites(url = this.url, callback) {
     console.warn(
-      // eslint-disable-line no-console
       "\r\nWarning:",
       "function .getSites() is deprecated, please use the function .fetch()\r\n"
     );

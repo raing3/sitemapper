@@ -1,6 +1,13 @@
-export interface SitemapperResponse {
+export interface SitemapEntry {
+  loc: string;
+  lastmod?: string;
+  changefreq?: string;
+  priority?: string;
+}
+
+export interface SitemapperResponse<TFields extends keyof SitemapEntry> {
   url: string;
-  sites: string[];
+  sites: Array<Pick<SitemapEntry, TFields>>;
   errors: SitemapperErrorData[];
 }
 
@@ -10,7 +17,7 @@ export interface SitemapperErrorData {
   retries: number;
 }
 
-export interface SitemapperOptions {
+export interface SitemapperOptions<TFields extends keyof SitemapEntry> {
   concurrency?: number;
   debug?: boolean;
   lastmod?: number;
@@ -19,21 +26,21 @@ export interface SitemapperOptions {
   retries?: number;
   timeout?: number;
   url?: string;
-  fields?: {[name: string]: boolean};
+  fields?: Array<TFields>;
 }
 
-declare class Sitemapper {
+declare class Sitemapper<TFields extends keyof SitemapEntry> {
 
   timeout: number;
 
-  constructor(options: SitemapperOptions)
+  constructor(options: SitemapperOptions<TFields>)
 
   /**
    * Gets the sites from a sitemap.xml with a given URL
    *
    * @param url URL to the sitemap.xml file
    */
-  fetch(url?: string): Promise<SitemapperResponse>;
+  fetch(url?: string): Promise<SitemapperResponse<TFields>>;
 }
 
 export default Sitemapper;

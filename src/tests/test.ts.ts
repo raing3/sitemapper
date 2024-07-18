@@ -1,11 +1,10 @@
 import 'async';
 import 'assert';
-import 'should';
+import should from 'should';
 import isUrl = require('is-url');
 
 // @ts-ignore
 import Sitemapper from '../../lib/assets/sitemapper.js';
-import { SitemapperResponse } from '../../sitemapper';
 let sitemapper: Sitemapper;
 
 describe('Sitemapper', function () {
@@ -17,19 +16,19 @@ describe('Sitemapper', function () {
   describe('Sitemapper Class', function () {
 
     it('should have initializeTimeout method', () => {
-      sitemapper.initializeTimeout.should.be.Function;
+      sitemapper.initializeTimeout.should.be.Function();
     });
 
     it('should have crawl method', () => {
-      sitemapper.crawl.should.be.Function;
+      sitemapper.crawl.should.be.Function();
     });
 
     it('should have parse method', () => {
-      sitemapper.parse.should.be.Function;
+      sitemapper.parse.should.be.Function();
     });
 
     it('should have fetch method', () => {
-      sitemapper.fetch.should.be.Function;
+      sitemapper.fetch.should.be.Function();
     });
 
     it('should construct with a url', () => {
@@ -75,10 +74,10 @@ describe('Sitemapper', function () {
       const url = 'https://wp.seantburke.com/sitemap.xml';
       sitemapper.fetch(url)
         .then(data => {
-          data.sites.should.be.Array;
+          data.sites.should.be.Array();
           data.url.should.equal(url);
           data.sites.length.should.be.above(2);
-          isUrl(data.sites[0]).should.be.true;
+          isUrl(data.sites[0].loc).should.be.true();
           done();
         })
         .catch(error => {
@@ -92,8 +91,8 @@ describe('Sitemapper', function () {
       const url = 'http://gibberish.gibberish';
       sitemapper.fetch(url)
         .then(data => {
-          data.sites.should.be.Array;
-          data.errors.should.be.Array;
+          data.sites.should.be.Array();
+          data.errors.should.be.Array();
           done();
         })
         .catch(error => {
@@ -107,10 +106,10 @@ describe('Sitemapper', function () {
       const url = 'https://www.google.com/work/sitemap.xml';
       sitemapper.fetch(url)
         .then(data => {
-          data.sites.should.be.Array;
+          data.sites.should.be.Array();
           data.url.should.equal(url);
           data.sites.length.should.be.above(2);
-          isUrl(data.sites[0]).should.be.true;
+          isUrl(data.sites[0].loc).should.be.true();
           done();
         })
         .catch(error => {
@@ -119,31 +118,48 @@ describe('Sitemapper', function () {
         });
     });
 
-    it('https://www.channable.com/sitemap.xml sitemaps should contain extra fields', function (done) {
+    it('https://www.channable.com/sitemap.xml sitemaps should contain all standard fields when fields not defined', function (done) {
+      this.timeout(30000);
+      const url = 'https://www.channable.com/sitemap.xml';
+      sitemapper = new Sitemapper({});
+      sitemapper.fetch(url)
+        .then(data => {
+          data.sites.should.be.Array();
+          data.url.should.equal(url);
+          data.sites.length.should.be.above(2);
+          data.sites[0].loc.should.be.String();
+          data.sites[0].lastmod.should.be.String();
+          data.sites[0].priority.should.be.String();
+          data.sites[0].changefreq.should.be.String();
+          done();
+        })
+        .catch(error => {
+          console.error('Test failed');
+          done(error);
+        });
+    });
+
+    it('https://www.channable.com/sitemap.xml sitemaps should contain a subset of fields', function (done) {
       this.timeout(30000);
       const url = 'https://www.channable.com/sitemap.xml';
       sitemapper = new Sitemapper({
-        fields: { "loc": true,
-          "lastmod": true,
-          "priority": true,
-          "changefreq": true
-        }
+        fields: ["loc", "lastmod"]
       });
       sitemapper.fetch(url)
-          .then(data => {
-            data.sites.should.be.Array;
-            data.url.should.equal(url);
-            data.sites.length.should.be.above(2);
-            data.sites[0].loc.should.be.String;
-            data.sites[0].lastmod.should.be.String;
-            data.sites[0].priority.should.be.String;
-            data.sites[0].changefreq.should.be.String;
-            done();
-          })
-          .catch(error => {
-            console.error('Test failed');
-            done(error);
-          });
+        .then(data => {
+          data.sites.should.be.Array();
+          data.url.should.equal(url);
+          data.sites.length.should.be.above(2);
+          data.sites[0].loc.should.be.String();
+          data.sites[0].lastmod.should.be.String();
+          should(data.sites[0].priority).be.Undefined();
+          should(data.sites[0].changefreq).be.Undefined();
+          done();
+        })
+        .catch(error => {
+          console.error('Test failed');
+          done(error);
+        });
     });
 
     it('https://www.golinks.io/sitemap.xml sitemaps should be an array', function (done) {
@@ -152,10 +168,10 @@ describe('Sitemapper', function () {
       sitemapper.timeout = 5000;
       sitemapper.fetch(url)
         .then(data => {
-          data.sites.should.be.Array;
+          data.sites.should.be.Array();
           data.url.should.equal(url);
           data.sites.length.should.be.above(2);
-          isUrl(data.sites[0]).should.be.true;
+          isUrl(data.sites[0].loc).should.be.true();
           done();
         })
         .catch(error => {
@@ -171,7 +187,7 @@ describe('Sitemapper', function () {
 
       sitemapper.fetch(url)
         .then(data => {
-          data.sites.should.be.Array;
+          data.sites.should.be.Array();
           done();
         })
         .catch(error => {
@@ -196,8 +212,8 @@ describe('Sitemapper', function () {
       sitemapper.timeout = 10000;
       sitemapper.fetch(url)
         .then(data => {
-          data.sites.should.be.Array;
-          data.errors.should.be.Array;
+          data.sites.should.be.Array();
+          data.errors.should.be.Array();
           data.sites.length.should.be.greaterThan(0);
           done();
         })
@@ -205,18 +221,6 @@ describe('Sitemapper', function () {
           console.error('Test failed');
           done(error);
         });
-    });
-  });
-
-  describe('getSites method', function () {
-    it('getSites should be backwards compatible', function (done) {
-      this.timeout(30000);
-      const url = 'https://wp.seantburke.com/sitemap.xml';
-      sitemapper.getSites(url, (err, sites) => {
-        sites.should.be.Array;
-        isUrl(sites[0]).should.be.true;
-        done();
-      });
     });
   });
 });
