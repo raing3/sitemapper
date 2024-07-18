@@ -49,6 +49,9 @@
   "engines": {
     "node": ">= 20.0.0"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@babel/cli": "^7.24.8",
     "@babel/core": "^7.24.9",
