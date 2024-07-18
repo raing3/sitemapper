@@ -1,6 +1,6 @@
 {
   "name": "@raing3/sitemapper",
-  "version": "3.2.10",
+  "version": "1.0.0",
   "description": "Parser for XML Sitemaps to be used with Robots.txt and web crawlers",
   "keywords": [
     "parse",
