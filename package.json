@@ -33,10 +33,10 @@
     "url": "http://www.seantburke.com"
   },
   "scripts": {
-    "compile": "babel src -d lib -s && tsc --project ./src/tests/",
+    "compile": "babel src -d lib -s",
     "build": "npm run clean && npm run compile",
     "start": "npm run build && node lib/examples/index.js",
-    "test": "npm run build && mocha ./lib/tests/*.js && npm run lint",
+    "test": "npm run build && vitest run && npm run lint",
     "lint": "eslint src",
     "clean": "rm -rf lib",
     "prepack": "npm run build"
@@ -57,21 +57,17 @@
     "@babel/core": "^7.24.9",
     "@babel/preset-env": "^7.24.8",
     "@babel/runtime": "^7.24.8",
-    "@types/async": "^3.2.24",
     "@types/got": "^9.6.12",
     "@types/is-url": "^1.2.32",
-    "@types/mocha": "^10.0.7",
     "@types/xml2js": "^0.4.14",
-    "async": "^3.2.5",
     "babel-plugin-add-module-exports": "^1.0.4",
     "babel-preset-minify": "^0.5.2",
     "eslint": "^9.7.0",
     "globals": "^15.8.0",
     "is-url": "^1.2.4",
-    "mocha": "^10.6.0",
-    "should": "^13.2.3",
     "ts-node": "^10.9.2",
-    "typescript": "^5.5.3"
+    "typescript": "^5.5.3",
+    "vitest": "^3.0.6"
   },
   "dependencies": {
     "got": "^11.8.6",
