@@ -235,7 +235,7 @@ export default class Sitemapper {
       }
 
       // otherwise parse the XML that was returned.
-      const data = await parseStringPromise(responseBody);
+      const data = this.fixBrokenSitemap(await parseStringPromise(responseBody));
 
       // return the results
       return { error: null, data };
@@ -460,8 +460,8 @@ export default class Sitemapper {
   /**
    * Decompress the gzipped response body using zlib.gunzip
    *
-   * @param {Buffer} body - body of the gzipped file
-   * @returns {Boolean}
+   * @param {string} body - body of the gzipped file
+   * @returns {Promise<Buffer>}
    */
   decompressResponseBody(body) {
     return new Promise((resolve, reject) => {
@@ -474,6 +474,45 @@ export default class Sitemapper {
         }
       });
     });
+  }
+
+  /**
+   * Attempts to "fix" an invalidly structured sitemap.
+   * @param {Object} data The parsed sitemap data as a multi-dimensional JS object.
+   * @private
+   */
+  fixBrokenSitemap(data) {
+    // Un-nest deeply nested "urlset" objects to contain a single set of "url" objects.
+    if (data?.urlset?.urlset instanceof Array) {
+      const maxDepth = 5;
+      let pendingUrlsets = data.urlset.urlset;
+      let urls = [];
+      let depth = 0;
+
+      if (data.urlset.url instanceof Array) {
+        urls = data.urlset.url;
+      }
+
+      do {
+        const urlsets = pendingUrlsets;
+        pendingUrlsets = [];
+
+        urlsets.forEach((urlset) => {
+          if (urlset.url instanceof Array) {
+            urls.push(...urlset.url);
+          }
+
+          if (urlset.urlset instanceof Array) {
+            pendingUrlsets.push(...urlset.urlset);
+          }
+        });
+      } while (pendingUrlsets.length > 0 && ++depth < maxDepth);
+
+      data.urlset.url = urls;
+      delete data.urlset.urlset;
+    }
+
+    return data;
   }
 }
 
