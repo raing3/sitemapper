@@ -6,7 +6,6 @@ module.exports = [
   {
     languageOptions: {
       globals: {
-        ...globals.mocha,
         ...globals.node
       }
     }

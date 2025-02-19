@@ -22,8 +22,8 @@ Make sure all tests pass using
 ```bash
 npm test
 ```
-This will run [Mocha](https://mochajs.org/) for testing and [ESLint](http://eslint.org/) for style guides
-The tests run will be `mocha` and `eslint`.
+This will run [vitest](https://vitest.dev/) for testing and [ESLint](http://eslint.org/) for style guides
+The tests run will be `vitest` and `eslint`.
 Make sure your style follows the style guide in `.eslintrc`
 
 ### Style Guide
